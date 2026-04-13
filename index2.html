@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>프리미엄 로또 추첨기</title>
+    <style>
+        :root {
+            --bg-color: #f8f9fa;
+            --container-bg: #ffffff;
+            --primary-color: #4a90e2;
+            --accent-color: #f5a623;
+            --text-color: #333;
+            
+            /* 로또 공 색상 */
+            --lotto-yellow: #fbc400;
+            --lotto-blue: #69c8f2;
+            --lotto-red: #ff7272;
+            --lotto-gray: #aaaaaa;
+            --lotto-green: #b0d840;
+        }
+
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background-color: var(--container-bg);
+            padding: 3rem;
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 600px;
+            width: 90%;
+        }
+
+        h1 {
+            margin-bottom: 2rem;
+            font-weight: 800;
+            color: var(--primary-color);
+            letter-spacing: -1px;
+        }
+
+        .ball-container {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 3rem;
+            min-height: 60px;
+        }
+
+        .ball {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+            box-shadow: inset -4px -4px 8px rgba(0,0,0,0.2), 0 4px 10px rgba(0,0,0,0.2);
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            opacity: 0;
+            transform: scale(0.5);
+        }
+
+        @keyframes popIn {
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .btn-draw {
+            background: linear-gradient(135deg, var(--primary-color), #357abd);
+            color: white;
+            border: none;
+            padding: 1rem 2.5rem;
+            font-size: 1.2rem;
+            font-weight: 700;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 20px rgba(74, 144, 226, 0.3);
+        }
+
+        .btn-draw:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 25px rgba(74, 144, 226, 0.4);
+        }
+
+        .btn-draw:active {
+            transform: translateY(1px);
+        }
+
+        .btn-draw:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .info-text {
+            margin-top: 1.5rem;
+            color: #888;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>LOTTO 6/45</h1>
+        <div id="ball-container" class="ball-container">
+            <!-- 공이 여기에 생성됩니다 -->
+        </div>
+        <button id="draw-btn" class="btn-draw">번호 추첨하기</button>
+        <p class="info-text">버튼을 누르면 행운의 번호가 나타납니다!</p>
+    </div>
+
+    <script>
+        const container = document.getElementById('ball-container');
+        const drawBtn = document.getElementById('draw-btn');
+
+        function getBallColor(num) {
+            if (num <= 10) return 'var(--lotto-yellow)';
+            if (num <= 20) return 'var(--lotto-blue)';
+            if (num <= 30) return 'var(--lotto-red)';
+            if (num <= 40) return 'var(--lotto-gray)';
+            return 'var(--lotto-green)';
+        }
+
+        function generateNumbers() {
+            const numbers = [];
+            while (numbers.length < 6) {
+                const r = Math.floor(Math.random() * 45) + 1;
+                if (numbers.indexOf(r) === -1) numbers.push(r);
+            }
+            return numbers.sort((a, b) => a - b);
+        }
+
+        async function draw() {
+            drawBtn.disabled = true;
+            container.innerHTML = '';
+            const numbers = generateNumbers();
+
+            for (let i = 0; i < numbers.length; i++) {
+                await new Promise(resolve => setTimeout(resolve, 300));
+                const ball = document.createElement('div');
+                ball.className = 'ball';
+                ball.style.backgroundColor = getBallColor(numbers[i]);
+                ball.textContent = numbers[i];
+                container.appendChild(ball);
+            }
+            
+            drawBtn.disabled = false;
+        }
+
+        drawBtn.addEventListener('click', draw);
+    </script>
+</body>
+</html>
